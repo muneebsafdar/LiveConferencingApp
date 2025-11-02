@@ -50,7 +50,9 @@ export default function Header() {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <Link href="/dashboard" legacyBehavior passHref>
+              <Link href="/dashboard">
+                {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                }
                 <Button 
                   className="flex items-center space-x-1 md:space-x-2 bg-[#1D546C] text-[#F4F4F4] hover:bg-[#1A3D64] transition-all duration-300 text-sm md:text-base px-3 md:px-4"
                   size="default"
