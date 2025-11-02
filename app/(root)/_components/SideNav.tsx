@@ -1,5 +1,7 @@
+"use client"
+
 import Link from 'next/link';
-import { Home, Users, Settings, FileText, BarChart3, Calendar, Mail, Bell } from 'lucide-react';
+import { Home, CalendarClock, CalendarMinus, Video, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -13,25 +15,27 @@ import {
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
-  { icon: BarChart3, label: 'Analytics', href: '/analytics' },
-  { icon: Users, label: 'Users', href: '/users' },
-  { icon: FileText, label: 'Documents', href: '/documents' },
-  { icon: Calendar, label: 'Calendar', href: '/calendar' },
-  { icon: Mail, label: 'Messages', href: '/messages' },
-  { icon: Bell, label: 'Notifications', href: '/notifications' },
-  { icon: Settings, label: 'Settings', href: '/settings' },
+  { icon: CalendarClock, label: 'Upcoming', href: '/home/upcoming' },
+  { icon: CalendarMinus, label: 'Previous', href: '/home/previous' },
+  { icon: Video, label: 'Recordings', href: '/home/recordings' },
+  { icon: User, label: 'Personal Room', href: '/home/personal-room' },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobile?: boolean;
+  onNavigate?: () => void;
+}
+
+export default function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
   return (
-    <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[#1A3D64] shadow-xl border-r border-[#0C2B4E]">
+    <aside className={`${mobile ? 'relative h-full' : 'hidden lg:block fixed left-0 top-16 h-[calc(100vh-4rem)]'} w-64 bg-[#1A3D64] shadow-xl border-r border-[#0C2B4E]`}>
       <ScrollArea className="h-[calc(100%-5rem)]">
         <nav className="p-4 space-y-2">
           <TooltipProvider>
             {navItems.map((item) => (
               <Tooltip key={item.href}>
                 <TooltipTrigger asChild>
-                  <Link href={item.href}>
+                  <Link href={item.href} onClick={onNavigate}>
                     <Button
                       variant="ghost"
                       className="w-full justify-start text-[#F4F4F4] hover:bg-[#1D546C] hover:text-[#F4F4F4] transition-all duration-300 h-12"
@@ -53,7 +57,7 @@ export default function Sidebar() {
       <Separator className="bg-[#0C2B4E]" />
 
       {/* User Profile Section */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-[#0C2B4E]">
+      <div className={`${mobile ? 'relative' : 'absolute bottom-0 left-0 right-0'} p-4 bg-[#0C2B4E]`}>
         <div className="flex items-center space-x-3 px-2">
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
