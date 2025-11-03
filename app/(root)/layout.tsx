@@ -6,7 +6,7 @@ import Sidebar from './_components/SideNav'
 
 export default function RootLayout({children}:{children:ReactNode}) {
   return (
-    <div className='min-h-screen bg-[#F4F4F4]'>
+    <div className='min-h-screen'>
       {/* Header - Fixed at top */}
       <Header />
       
@@ -16,7 +16,7 @@ export default function RootLayout({children}:{children:ReactNode}) {
         
         {/* Main Content - Responsive margins and padding */}
         <main className='flex-1 lg:ml-64 mt-16 p-4 md:p-6 w-full'>
-          <div className='max-w-7xl mx-auto'>
+          <div className='max-w-7xl min-h-screen w-full'>
             {children}
           </div>
         </main>

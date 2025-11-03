@@ -1,10 +1,23 @@
-import { NextResponse, NextRequest } from 'next/server'
- 
-// This function can be marked `async` if using `await` inside
-export function proxy(request: NextRequest) {
-  
-}
- 
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+
+const isProtectedRoute = createRouteMatcher([
+  '/',
+  '/home',
+  '/home/upcoming',
+  '/home/previous',
+  '/home/recordings',
+  '/home/personal-room',
+  '/home/meeting(.*)',
+]);
+
+export default clerkMiddleware(async(auth, req) => {
+  if (isProtectedRoute(req)) await auth.protect()
+});
+
 export const config = {
-  matcher: '/about/:path*',
-}
+  matcher: [
+    // Run middleware on all routes except static files and Next internals
+    '/((?!_next|.*\\..*).*)',
+    '/(api|trpc)(.*)',
+  ],
+};

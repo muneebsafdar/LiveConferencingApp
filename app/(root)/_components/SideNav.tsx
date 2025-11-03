@@ -12,9 +12,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { icon: Home, label: 'Home', href: '/' },
+  { icon: Home, label: 'Home', href: '/home' },
   { icon: CalendarClock, label: 'Upcoming', href: '/home/upcoming' },
   { icon: CalendarMinus, label: 'Previous', href: '/home/previous' },
   { icon: Video, label: 'Recordings', href: '/home/recordings' },
@@ -27,6 +28,11 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
+
+
+  const path=usePathname()
+
+
   return (
     <aside className={`${mobile ? 'relative h-full' : 'hidden lg:block fixed left-0 top-16 h-[calc(100vh-4rem)]'} w-64 bg-[#1A3D64] shadow-xl border-r border-[#0C2B4E]`}>
       <ScrollArea className="h-[calc(100%-5rem)]">
@@ -38,7 +44,7 @@ export default function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
                   <Link href={item.href} onClick={onNavigate}>
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-[#F4F4F4] hover:bg-[#1D546C] hover:text-[#F4F4F4] transition-all duration-300 h-12"
+                      className={`w-full justify-start text-[#F4F4F4] hover:bg-[#1D546C] hover:text-[#F4F4F4] transition-all duration-300 h-12 ${path==item.href ? "bg-[#1D546C]" :""}`}
                     >
                       <item.icon size={22} className="mr-3 shrink-0" />
                       <span className="font-medium">{item.label}</span>
@@ -57,7 +63,7 @@ export default function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       <Separator className="bg-[#0C2B4E]" />
 
       {/* User Profile Section */}
-      <div className={`${mobile ? 'relative' : 'absolute bottom-0 left-0 right-0'} p-4 bg-[#0C2B4E]`}>
+      <div className={`${mobile ? 'relative' : 'absolute bottom-0 left-0 right-0'} p-4`}>
         <div className="flex items-center space-x-3 px-2">
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
