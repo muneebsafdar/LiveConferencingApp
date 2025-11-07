@@ -3,6 +3,8 @@
 import React, { ReactNode } from 'react'
 import Header from './_components/Header'
 import Sidebar from './_components/SideNav'
+import { StreamVideoProvider } from '@/providers/StreamClientProvider'
+
 
 export default function RootLayout({children}:{children:ReactNode}) {
   return (
@@ -17,7 +19,9 @@ export default function RootLayout({children}:{children:ReactNode}) {
         {/* Main Content - Responsive margins and padding */}
         <main className='flex-1 lg:ml-64 mt-16 p-4 md:p-6 w-full'>
           <div className='max-w-7xl min-h-screen w-full'>
-            {children}
+      <StreamVideoProvider>
+              {children}
+      </StreamVideoProvider>
           </div>
         </main>
       </div>
