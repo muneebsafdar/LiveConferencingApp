@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+
 
 interface MeetingModalProps {
   isOpen: boolean;
@@ -38,6 +40,7 @@ export default function MeetingModal({
   };
 
   return (
+    <VisuallyHidden>
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="bg-[#1A3D64] border-[#0C2B4E] text-[#F4F4F4] max-w-md">
         <DialogHeader>
@@ -78,5 +81,6 @@ export default function MeetingModal({
         </div>
       </DialogContent>
     </Dialog>
+    </VisuallyHidden>
   );
 }

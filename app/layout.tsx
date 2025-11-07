@@ -27,10 +27,103 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: "#1D546C",
+          colorBackground: "#1A3D64",
+          colorInputBackground: "#0C2B4E",
+          colorInputText: "#F4F4F4",
+          colorText: "#F4F4F4",
+          colorTextSecondary: "#F4F4F4",
+          colorTextOnPrimaryBackground: "#F4F4F4",
+          colorDanger: "#DC2626",
+          colorSuccess: "#10B981",
+          borderRadius: "0.5rem",
+          fontSize: "0.875rem",
+        },
+        elements: {
+          // Root and card - centered on dark background
+          rootBox: "flex items-center justify-center min-h-screen",
+          card: "bg-[#1A3D64] shadow-2xl border border-[#0C2B4E] w-full max-w-md",
+          
+          // Header
+          headerTitle: "text-2xl font-bold text-[#F4F4F4]",
+          headerSubtitle: "text-[#F4F4F4]/80",
+          
+          // Form elements
+          formButtonPrimary: 
+            "bg-[#1D546C] hover:bg-[#0C2B4E] text-[#F4F4F4] transition-all duration-300 shadow-md hover:shadow-lg h-10",
+          
+          formFieldInput: 
+            "bg-[#0C2B4E] border-[#1D546C] text-[#F4F4F4] placeholder:text-[#F4F4F4]/50 focus:border-[#1D546C] focus:ring-[#1D546C] h-10",
+          
+          formFieldLabel: "text-[#F4F4F4] font-medium text-sm",
+          
+          formFieldHintText: "text-[#F4F4F4]/70 text-xs",
+          
+          formFieldErrorText: "text-red-400 text-xs",
+          
+          formFieldSuccessText: "text-green-400 text-xs",
+          
+          // Social buttons
+          socialButtonsBlockButton: 
+            "bg-[#0C2B4E] border-[#1D546C] text-[#F4F4F4] hover:bg-[#1D546C] transition-all duration-200 h-10",
+          
+          socialButtonsIconButton: 
+            "bg-[#0C2B4E] border-[#1D546C] text-[#F4F4F4] hover:bg-[#1D546C]",
+          
+          // Divider
+          dividerLine: "bg-[#1D546C]",
+          dividerText: "text-[#F4F4F4]/70 text-xs",
+          
+          // Footer links
+          footerAction: "bg-[#1A3D64]",
+          footerActionText: "text-[#F4F4F4] text-sm",
+          footerActionLink: "text-[#F4F4F4] hover:text-white font-semibold underline",
+          
+          // Identity preview
+          identityPreview: "border-[#1D546C] bg-[#0C2B4E]",
+          identityPreviewText: "text-[#F4F4F4]",
+          identityPreviewEditButton: "text-[#F4F4F4] hover:text-white",
+          
+          // Alert
+          alert: "bg-[#0C2B4E] border-[#1D546C] text-[#F4F4F4]",
+          alertText: "text-[#F4F4F4]",
+          
+          // OTP Input
+          otpCodeFieldInput: "bg-[#0C2B4E] border-[#1D546C] text-[#F4F4F4] w-10 h-12 text-lg",
+          
+          // Links
+          formResendCodeLink: "text-[#F4F4F4] hover:text-white underline text-sm",
+          
+          // User button (when signed in)
+          userButtonPopoverCard: "bg-[#1A3D64] border-[#0C2B4E]",
+          userButtonPopoverActionButton: "bg-[#0C2B4E] text-[#F4F4F4] hover:bg-[#1D546C]",
+          userButtonTrigger: "border-[#1D546C]",
+          
+          // Avatar
+          avatarBox: "border-[#1D546C]",
+          
+          // Modal
+          modalBackdrop: "bg-[#0C2B4E]/80",
+          modalContent: "bg-[#1A3D64] border-[#0C2B4E]",
+          
+          // Badge
+          badge: "bg-[#1D546C] text-[#F4F4F4] text-xs",
+          
+          // Navbar
+          navbar: "bg-[#1A3D64]",
+          navbarButton: "text-[#F4F4F4] hover:bg-[#1D546C]",
+          
+          // Internal elements
+          internal: "bg-[#1A3D64]",
+        },
+      }}
+    >
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#1A3D64] w-full min-h-screen`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0C2B4E] w-full min-h-screen`}
         >
           {children}
           <Toaster />

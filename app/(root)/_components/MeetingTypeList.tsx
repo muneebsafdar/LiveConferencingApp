@@ -10,6 +10,19 @@ import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
 
+// UUID generator function
+const generateUUID = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback UUID generation
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export default function MeetingTypeList() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -24,61 +37,138 @@ export default function MeetingTypeList() {
   const [calldetails, setCallDetails] = useState<Call>();
 
   const handleStartMeeting = async () => {
+    console.log('=== Meeting Creation Debug ===');
+    console.log('Client available:', !!client);
+    console.log('User authenticated:', !!user);
+    console.log('User ID:', user?.id);
+    console.log('DateTime:', values.dateTime);
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Base URL:', process.env.NEXT_PUBLIC_BASE_URL);
+    console.log('==============================');
+
     if (!values.dateTime) {
       toast("Please fill all required information");
       return;
     }
-    if (!client || !user) return;
+    
+    // Add more detailed client checks
+    if (!client) {
+      console.error('Stream client not initialized');
+      toast("Video service not available");
+      return;
+    }
+    
+    if (!user) {
+      console.error('User not authenticated');
+      toast("Please sign in to start a meeting");
+      return;
+    }
 
     try {
-      const id = crypto.randomUUID();
+      const id = generateUUID();
       const call = client.call('default', id);
-      if (!call) throw new Error('Call not found');
-      const startAt = values.dateTime.toISOString() || new Date().toISOString();
+      
+      if (!call) {
+        throw new Error('Failed to create call instance');
+      }
+
+      const startAt = values.dateTime.toISOString();
       const description = values.description || "instant meeting";
 
-      await call.getOrCreate({
+      // Add timeout for the API call
+      const createCallPromise = call.getOrCreate({
         data: {
           starts_at: startAt,
           custom: { description }
         }
       });
 
+      // Timeout after 10 seconds
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout')), 10000);
+      });
+
+      await Promise.race([createCallPromise, timeoutPromise]);
+
       setCallDetails(call);
+      
+      // Use relative path for routing instead of absolute URL
       if (!values.description) {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${call.id}`);
+        router.push(`/meeting/${call.id}`);
       }
+      
       toast("Meeting created successfully");
-    } catch (error) {
-      toast("Something went wrong while starting the meeting");
+      
+    } catch (error: any) {
+      console.error('Meeting creation error:', error);
+      
+      // More specific error messages
+      if (error.message === 'Request timeout') {
+        toast("Network timeout. Please check your connection.");
+      } else if (error.message?.includes('auth') || error.message?.includes('token')) {
+        toast("Authentication failed. Please refresh the page.");
+      } else {
+        toast("Something went wrong while starting the meeting");
+      }
     }
   };
 
-const handleScheduleMeeting = async (title: string, description: string, dateTime: Date) => {
-  if (!client || !user) return;
+  const handleScheduleMeeting = async (title: string, description: string, dateTime: Date) => {
+    console.log('=== Schedule Meeting Debug ===');
+    console.log('Client available:', !!client);
+    console.log('User authenticated:', !!user);
+    console.log('Title:', title);
+    console.log('Description:', description);
+    console.log('DateTime:', dateTime);
+    console.log('==============================');
 
-  try {
-    const id = crypto.randomUUID();
-    const call = client.call('default', id);
-    if (!call) throw new Error('Call not found');
+    if (!client || !user) {
+      toast("Video service not available or user not authenticated");
+      return;
+    }
 
-    await call.getOrCreate({
-      data: {
-        starts_at: dateTime.toISOString(),
-        custom: {
-          title,
-          description,
+    try {
+      const id = generateUUID();
+      const call = client.call('default', id);
+      
+      if (!call) {
+        throw new Error('Failed to create call instance');
+      }
+
+      // Add timeout for the API call
+      const createCallPromise = call.getOrCreate({
+        data: {
+          starts_at: dateTime.toISOString(),
+          custom: {
+            title,
+            description,
+          },
         },
-      },
-    });
+      });
 
-    setCallDetails(call);
-    toast("Meeting scheduled successfully");
-    setOpenSchedule(false);
-  } catch (error) {
-    toast("Something went wrong while scheduling the meeting");
-  }
-};
+      // Timeout after 10 seconds
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout')), 10000);
+      });
+
+      await Promise.race([createCallPromise, timeoutPromise]);
+
+      setCallDetails(call);
+      toast("Meeting scheduled successfully");
+      setOpenSchedule(false);
+    } catch (error: any) {
+      console.error('Schedule meeting error:', error);
+      
+      // More specific error messages
+      if (error.message === 'Request timeout') {
+        toast("Network timeout. Please check your connection.");
+      } else if (error.message?.includes('auth') || error.message?.includes('token')) {
+        toast("Authentication failed. Please refresh the page.");
+      } else {
+        toast("Something went wrong while scheduling the meeting");
+      }
+    }
+  };
 
   return (
     <div>
@@ -91,7 +181,7 @@ const handleScheduleMeeting = async (title: string, description: string, dateTim
           bgClassName='bg-[#F87B1B]'
         />
         <HomeCard 
-          setOpen={() => setOpenSchedule(true)}  // ✅ schedule modal trigger
+          setOpen={() => setOpenSchedule(true)}
           icon={Clock}
           mainText="Schedule Meeting"
           secondaryText="Plan meetings ahead of time and send invites to participants."
@@ -115,7 +205,7 @@ const handleScheduleMeeting = async (title: string, description: string, dateTim
       <ScheduleMeetingModal
         isOpen={openSchedule}
         onOpenChange={setOpenSchedule}
-        onSchedule={handleScheduleMeeting} // ✅ added the schedule handler
+        onSchedule={handleScheduleMeeting}
       />
     </div>
   );
